@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# _*_ coding: utf-8 _*_
-
 import asyncio, logging
 import aiomysql
 
@@ -17,7 +14,7 @@ async def create_pool(loop, **kw):
         password = kw['password'],
         db = kw['db'],
         charset = kw.get('charset', 'utf8'),
-        autocommit = kw.get('autocommit', true),
+        autocommit = kw.get('autocommit', True),
         maxsize = kw.get('maxsize', 10),
         minsize = kw.get('minsize', 1),
         loop = loop)
@@ -42,7 +39,7 @@ async def execute(sql, args, autocommit = True):
             await conn.begin()
         try:
             async with conn.cursor(aiomysql.DictCursor) as cur:
-                await cur.execute(sql.replace('?', '%s', args))
+                await cur.execute(sql.replace('?', '%s'), args)
                 affected = cur.rowcount
             if not autocommit:
                 await conn.commit()
@@ -70,10 +67,10 @@ class Field(object):
 
 class StringField(Field):
     def __init__(self, name = None, primary_key = False, default = None, column_type = 'varchar(100)'):
-        super.__init__(name, column_type, primary_key, default)
+        super().__init__(name, column_type, primary_key, default)
 
 class BooleanField(Field):
-    def __init__(self, name = None, default = None):
+    def __init__(self, name = None, default = False):
         super().__init__(name, 'boolean', None, default)
 
 class IntegerField(Field):
@@ -89,7 +86,7 @@ class TextField(Field):
         super().__init__(name, 'text', False, default)
 
 class ModelMetaclass(type):
-    # ¶¯Ì¬Éú³É¶ÔÏó
+    # ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½
     def __new__(cls, name, bases, attrs):
         if name == 'Model':
             return type.__new__(cls, name, bases, attrs)
@@ -103,7 +100,7 @@ class ModelMetaclass(type):
                 logging.info(' found mapping: %s ==> %s' % (k, v))
                 mappings[k] = v
                 if v.primary_key:
-                    # ÕÒµ½Ö÷¼ü
+                    # ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½
                     if primaryKey:
                         raise StandardError('Duplicate primary key for field:%s' % k)
                     primaryKey = k
@@ -114,10 +111,10 @@ class ModelMetaclass(type):
         for k in mappings.keys():
             attrs.pop(k)
         escaped_fields = list(map(lambda f:'`%s`' % f, fields))
-        attrs['__mappings__'] = mappings # ±£´æÊôÐÔºÍÁÐµÄÓ³Éä¹ØÏµ
+        attrs['__mappings__'] = mappings # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½Ðµï¿½Ó³ï¿½ï¿½ï¿½Ïµ
         attrs['__table__'] = tableName
-        attrs['__primary_key__'] = primaryKey # Ö÷¼üÊôÐÔÃû
-        attrs['__fields__'] = fields # ³ýÁËÖ÷¼üÖ®ÍâµÄÊôÐÔÃû
+        attrs['__primary_key__'] = primaryKey # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        attrs['__fields__'] = fields # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escaped_fields), tableName)
         attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escaped_fields), primaryKey, create_args_string(len(escaped_fields) + 1))
         attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primaryKey)
