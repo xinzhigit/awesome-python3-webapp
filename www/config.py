@@ -22,7 +22,7 @@ class Dict(dict):
     def __setattr__(self, key, value):
         self[key] = value
 
-# ÓÃoverrideµÄ×Ö¶ÎÖÐµÄ×Ö¶ÎÌæ»»defaults×Ö¶ÎÖÐµÄ×Ö¶Î
+# ï¿½ï¿½overrideï¿½ï¿½ï¿½Ö¶ï¿½ï¿½Ðµï¿½ï¿½Ö¶ï¿½ï¿½æ»»defaultsï¿½Ö¶ï¿½ï¿½Ðµï¿½ï¿½Ö¶ï¿½
 def merge(defaults, override):
     r = {}
     for k,v in defaults.items():
@@ -35,7 +35,7 @@ def merge(defaults, override):
             r[k] = v
     return r
 
-# ½«dict×ª»»ÎªDict
+# ï¿½ï¿½dict×ªï¿½ï¿½ÎªDict
 def toDict(d):
     D = Dict()
     for k,v in d.items():
