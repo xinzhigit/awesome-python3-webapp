@@ -32,17 +32,17 @@
         <script src="/static/js/uikit/uikit.min.js"></script>
         <script src="/static/js/uikit/uikit-icons.js"></script>
         <script src="/static/js/uikit/uikit-icons.min.js"></script>
-        <script src="/static/js/awesom.js"></script>
+        <script src="/static/js/awesome.js"></script>
         {% block beforehead %}<!--before head-->{% endblock %}
     </head>
     <body>
         <nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
-            <div>
-                <a href="/" class="uk-container uk-container-center">Awesome</a>
-                <ul>
-                    <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i> 日志</a></li>
-                    <li><a target="_blank" href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000"><i class="uk-icon-book"></i> 教程</a></li>
-                    <li><a target="_blank" href="https://github.com/michaelliao/awesome-python3-webapp"><i class="uk-icon-code"></i> 源码</a></li>
+            <div class="uk-container uk-container-center">
+                <a href="/" class="uk-navbar-brand">Awesome</a>
+                <ul class="uk-navbar-nav">
+                    <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i> 鏃ュ織</a></li>
+                    <li><a target="_blank" href="http://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000"><i class="uk-icon-book"></i> 鏁欑▼</a></li>
+                    <li><a target="_blank" href="https://github.com/michaelliao/awesome-python3-webapp"><i class="uk-icon-code"></i> 婧愮爜</a></li>
                 </ul>
                 <div class="uk-navbar-flip">
                     <ul class="uk-navbar-nav">
@@ -51,13 +51,13 @@
                             <a href="#0"><i class="uk-icon-user"></i> {{ __user__.name }}</a>
                             <div class="uk-dropdown uk-dropdown-navbar">
                                 <ul class="uk-navbar uk-nav-navbar">
-                                    <li><a href="/signout"><i class="uk-icon-sign-out"></i> 登出</a></li>
+                                    <li><a href="/signout"><i class="uk-icon-sign-out"></i> 鐧诲嚭</a></li>
                                 </ul>
                             </div>
                         </li>
                     {% else %}
-                        <li><a href="/signin"><i class="uk-icon-sign-in"></i> 登录</a></li>
-                        <li><a href="/register"><i class="uk-icon-edit"></i> 注册</a></li>
+                        <li><a href="/signin"><i class="uk-icon-sign-in"></i> 鐧诲綍</a></li>
+                        <li><a href="/register"><i class="uk-icon-edit"></i> 娉ㄥ唽</a></li>
                     {% endif %}
                     </ul>
                 </div>
