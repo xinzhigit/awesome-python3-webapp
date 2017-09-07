@@ -72,7 +72,7 @@ async def response_factory(app, handler):
         if isinstance(r, dict):
             template = r.get('__template__')
             if template is None:
-                resp = web.Resource(body = json.dumps(r, ensure_ascii = False, default = lambda o: o.__dict__).encond('utf-8'))
+                resp = web.Response(body = json.dumps(r, ensure_ascii = False, default = lambda o: o.__dict__).encode('utf-8'))
                 resp.content_type = 'application/json;charset=utf-8'
                 return resp
             else:
