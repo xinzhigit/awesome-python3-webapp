@@ -217,11 +217,11 @@ function Template(tpl) {
 // extends jQuery.form
 $(function () {
     console.log('Extends $form...');
-    $fn.extend({
+    $.fn.extend({
         showFormError: function (err) {
             return this.each(function () {
                 var $form = $(this);
-                var $alert = $form && $form.find('.uk-alert-danger'),
+                var $alert = $form && $form.find('.uk-alert-danger');
                 var fieldName = err && err.data;
                 if (!$form.is('form')) {
                     console.error('Cannot call showFormError() on non-form object');
