@@ -147,7 +147,7 @@ function toSmartDate(timestamp) {
 
     var today = new Date(g_time);
     var now = today.getTime();
-    var s = '1·ÖÖÓÇ°';
+    var s = '1åˆ†é’Ÿå‰';
     var t = now - timestamp;
     if (t > 604800000) {
         // 1 week age
@@ -158,19 +158,19 @@ function toSmartDate(timestamp) {
         var hh = that.getHours();
         var mm = that.getMinutes();
 
-        s = y === today.getFullYear() ? '' : y + 'Äê';
-        s = s + m + 'ÔÂ' + d + 'ÈÕ' + hh + ':' + (mm < 10 ? '0' : '') + mm;
+        s = y === today.getFullYear() ? '' : y + 'å¹´';
+        s = s + m + 'æœˆ' + d + 'æ—¥' + hh + ':' + (mm < 10 ? '0' : '') + mm;
     }
     else if (t >= 86400000) {
         // 1-6 days ago
-        s = Math.floor(t / 86400000) + 'ÌìÇ°';
+        s = Math.floor(t / 86400000) + 'å¤©å‰';
     }
     else if (t >= 3600000) {
         // 1-23 hours ago
-        s = Math.floor(t / 3600000) + 'Ğ¡Ê±Ç°';
+        s = Math.floor(t / 3600000) + 'å°æ—¶å‰';
     }
     else if (t >= 60000) {
-        s = Math.floor(t / 60000) + '·ÖÖÓÇ°';
+        s = Math.floor(t / 60000) + 'åˆ†é’Ÿå‰';
     }
 
     return s;
@@ -255,7 +255,7 @@ $(function () {
                 var $form = $(this)
                 var $submit = $form && $form.find('button[type=submit]');
                 var $buttons = $form && $form.find('button');
-                var $i = $submit && submit.find('i');
+                var $i = $submit && $submit.find('i');
                 iconClass = $i && $i.attr('class');
                 if (!$form.is('form')) {
                     console.error('Cannot call showFormLoading() on non-form object');
@@ -266,11 +266,11 @@ $(function () {
                     return;
                 }
                 if (isLoading) {
-                    $button.attr('disabled', 'disabled');
+                    $buttons.attr('disabled', 'disabled');
                     $i && $i.addClass('uk-icon-spinner').addClass('uk-icon-spin');
                 }
                 else {
-                    $button.removeAttr('disabled');
+                    $buttons.removeAttr('disabled');
                     $i && $i.removeClass('uk-icon-spinner').removeClass('uk-icon-spin');
                 }
             });
@@ -310,9 +310,13 @@ function _httpJSON(method, url, data, callback) {
         opt.data = JSON.stringify(data || {});
         opt.contentType = 'application/json';
     }
-    $ajax(opt).done(function (r) {
+    $.ajax(opt).done(function (r) {
+        if (r && r.error) {
+            return callback(r, r);
+        }
+        return callback(null, r);
     }).fail(function (jqXHR, textStatus) {
-        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': 'ÍøÂçºÃÏñ³öÎÊÌâÁË (HTTP ' + jqXHR.status + ')' });
+        return callback({ 'error': 'http_bad_response', 'data': '' + jqXHR.status, 'message': 'ç½‘ç»œå¥½åƒå‡ºé—®é¢˜äº† (HTTP ' + jqXHR.status + ')' });
     });
 }
 
@@ -372,6 +376,11 @@ function redirect(url) {
 }
 
 // init
+
+function validateEmail(email) {
+    var re = /^[a-z0-9\.-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+    return re.test(email.toLowerCase());
+}
 
 function _bindSubmit($form) {
     $form.submit(function (event) {

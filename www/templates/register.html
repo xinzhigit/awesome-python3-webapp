@@ -5,35 +5,31 @@
 {% block beforehead %}
 
 <script>
-    function validateEmail(email) {
-        var re = /^[a-z0-9\.-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
-        return re.test(email.toLowerCase());
-    }
-
     function validate() {
-        var form = $('#vm');
-        var name = $('#name');
-        var email = $('#email');
-        var password1 = $('#password1');
-        var password2 = $('#password2');
+        var $form = $('#vm');
+        var name = $('#name').val();
+        var email = $('#email').val();
+        var password1 = $('#password1').val();
+        var password2 = $('#password2').val();
+
+        var email = email.trim().toLowerCase();
+        if (!name.trim()) {
+            return $form.showFormError('请输入名字');
+        }
+        if (!validateEmail(email)) {
+            return $form.showFormError('请输入正确的Email地址');
+        }
+        if (password1.length < 6) {
+            return $form.showFormError('口令长度至少为6个字符');
+        }
+        if (password1 !== password2) {
+            return $form.showFormError('两次输入的口令不一致');
+        }
         
-        if (!this.name.trim()) {
-            return form.showFormError('请输入名字');
-        }
-        if (!validateEmail(this.email.trim().toLowerCase())) {
-            return form.showFormError('请输入正确的Email地址');
-        }
-        if (this.password1.length < 6) {
-            return form.showFormError('口令长度至少为6个字符');
-        }
-        if (this.password1 !== this.password2) {
-            return form.showFormError('两次输入的口令不一致');
-        }
-        var email = this.email.trim().toLowerCase();
-        form.postJSON('/api/register', {
-            name: this.name.trim(),
+        $form.postJSON('/api/register', {
+            name: name.trim(),
             email: email,
-            password: str_sha1(email + ':' + this.password)
+            password: hex_sha1(email + ':' + password1)
         }, function (err, r) {
             if (err) {
                 return $form.showFormError(err);
@@ -43,8 +39,8 @@
     }
 
     $(function () {
-        var form = $('#vm');
-        form.show();
+        var $form = $('#vm');
+        $form.show();
     });
 </script>
 

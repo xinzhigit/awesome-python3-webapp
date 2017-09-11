@@ -5,6 +5,8 @@
 
 import re, time, json, logging, hashlib, base64, asyncio
 
+from aiohttp import web
+
 from coroweb import get, post
 from apis import APIValueError, APIResourceNotFoundError
 
@@ -24,14 +26,14 @@ def user2cookie(user, max_age):
     L = [user.id, expires, hashlib.sha1(s.encode('utf-8')).hexdigest()]
     return '-'.join(L)
 
-async def cookie2user(cookit_str):
+async def cookie2user(cookie_str):
     '''
     Parse cookie and load user if cookie is valid.
     '''
     if not cookie_str:
         return None
     try:
-        L = cookit_str.split('-')
+        L = cookie_str.split('-')
         if len(L) != 3:
             return None
         uid, expires, sha1 = L
@@ -60,7 +62,8 @@ async def index(request):
     ]
     return {
         '__template__' : 'blogs.html',
-        'blogs' : blogs
+        'blogs' : blogs,
+        '__user__' : request.__user__
     }
 
 @get('/api/users')
@@ -109,7 +112,7 @@ async def authenticate(*, email, password):
 
 @get('/signout')
 def signout(request):
-    referer = request.header.get('Referer')
+    referer = request.headers.get('Referer')
     r = web.HTTPFound(referer or '/')
     r.set_cookie(COOKIE_NAME, '-deleted-', max_age = 0, httponly = True)
     logging.info('user signout.')
@@ -128,7 +131,7 @@ async def api_register_user(*, email, name, password):
         raise APIValueError('Password format error.')
     users = await User.findAll('email=?', [email])
     if len(users) > 0:
-        raise APIError('Register failed, email is already exsit.')
+        raise APIValueError('Register failed', 'Email is already exsit.')
     uid = next_id()
     sha1_password = '%s:%s' % (uid, password)
     user = User(id = uid, name = name.strip(), email = email, password = hashlib.sha1(sha1_password.encode('utf-8')).hexdigest(), image = 'http://www.gravatar.com/avatar/%s?d=mm&s=120' % hashlib.md5(email.encode('utf-8')).hexdigest())
