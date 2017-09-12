@@ -189,6 +189,23 @@ def manage_create_blog():
         'action': '/api/blogs'
     }
 
+@get('/manage/blogs')
+def manage_blogs(*, page = '1'):
+    return {
+        '__template__' : manage_blogs.html,
+        'page_index' : get_page_index(page)
+    }
+
+@get('/api/blogs')
+async def api_blogs(*, page = '1'):
+    page_index = get_page_index(page)
+    num = await Blog.findNumber('count(id)')
+    p = page(num, page_index)
+    if num == 0:
+        return dict(page=p, blogs={})
+    blogs = await Blog.findAll(orderBy = 'created_at desc', limit = (p.offset, p.limit))
+    return dict(page=p, blogs=blogs)
+
 @get('/api/blogs/{id}')
 async def api_get_blog(*, id):
     blog = await Blog.find(id)
