@@ -5,9 +5,17 @@
 {% block beforehead %}
     <script src="/static/uikit/js/components/pagination.js"></script>
     <script>
+        function procBlogs(blogs) {
+            
+        }
+
+        function onChangePage(index) {
+            alert('You have selected page: ' + index);
+        }
+
         $(function () {
             $('[data-uk-pagination]').on('select.uk.pagination', function (e, pageIndex) {
-                alert('You have selected page: ' + (pageIndex + 1));
+                onChangePage(pageIndex + 1);
             });
 
             getJSON('/api/blogs', {
@@ -15,6 +23,9 @@
             }, function (err, results) {
                 if (err) {
                     return fatal(err);
+                }
+                else {
+                    procBlogs(result);
                 }
                 $('#loading').hide();
             });
