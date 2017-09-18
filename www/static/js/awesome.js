@@ -332,6 +332,7 @@ function getJSON(url, data, callback) {
         });
         data = arr.join('&');
     }
+    _httpJSON('GET', url, data, callback);
 }
 
 function postJSON(url, data, callback) {

@@ -1,11 +1,16 @@
 {% extends '__base__.html' %}
 
-{% block title %}ÈÕÖ¾{% endblock %}
+{% block title %}æ—¥å¿—{% endblock %}
 
 {% block beforehead %}
+    <script src="/static/uikit/js/components/pagination.js"></script>
     <script>
         $(function () {
-            getJSON('api/blogs', {
+            $('[data-uk-pagination]').on('select.uk.pagination', function (e, pageIndex) {
+                alert('You have selected page: ' + (pageIndex + 1));
+            });
+
+            getJSON('/api/blogs', {
                 page: {{ page_index }}
             }, function (err, results) {
                 if (err) {
@@ -13,6 +18,8 @@
                 }
                 $('#loading').hide();
             });
+
+            $('#vm').show();
         });
     </script>
 {% endblock %}
@@ -21,34 +28,37 @@
     <div class="uk-width-1-1 uk-margin-bottom">
         <div class="uk-panel uk-panel-box">
             <ul class="uk-breadcrumb">
-                <li><a href="/manage/comments">ÆÀÂÛ</a></li>
-                <li class="uk-active"><span>ÈÕÖ¾</span></li>
-                <li><a href="/manage/users">ÓÃ»§</a></li>
+                <li><a href="/manage/comments">è¯„è®º</a></li>
+                <li class="uk-active"><span>æ—¥å¿—</span></li>
+                <li><a href="/manage/users">ç”¨æˆ·</a></li>
             </ul>
         </div>
     </div>
 
+    <div id="error" class="uk-width-1-1">
+    </div>
+
     <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>ÕıÔÚ¼ÓÔØ...</span>
+        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i>æ­£åœ¨åŠ è½½...</span>
     </div>
 
     <div id="vm" class="uk-width-1-1">
-        <a href="/manage/blogs/create" class="uk-button uk-butoon-primary"><i class="uk-icon-plus">ĞÂÈÕÖ¾</a>
+        <a href="/manage/blogs/create" class="uk-button uk-butoon-primary"><i class="uk-icon-plus"></i>æ–°æ—¥å¿—</a>
         <table class="uk-table uk-table-hover">
             <thead>
                 <tr>
-                    <th class="uk-width-5-10">±êÌâ / ÕªÒª</th>
-                    <th class="uk-width-2-10">×÷Õß</th>
-                    <th class="uk-width-2-10">´´½¨Ê±¼ä</th>
-                    <th class="uk-width-1-10">²Ù×÷</th>
+                    <th class="uk-width-5-10">æ ‡é¢˜/æ‘˜è¦</th>
+                    <th class="uk-width-2-10">ä½œè€…</th>
+                    <th class="uk-width-2-10">åˆ›å»ºæ—¶é—´</th>
+                    <th class="uk-width-1-10">æ“ä½œ</th>
                 </tr>
             </thead>
             <tbody>
                 {% for blog in blogs %}
                 <tr id="blog:{{ blog.id }}">
-                    <td><a target="_blank" href="/blog/{{ blog.id }}" text="{{ blog.name }}"></a></td>
-                    <td><a target="_blank" href="/user/{{ blog.user_id }}" text="{{ blog.user_name }}"></a></td>
-                    <td><span text="{{ blog.created_at|datetime }}"></span></td>
+                    <td><a target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a></td>
+                    <td><a target="_blank" href="/user/{{ blog.user_id }}">{{ blog.user_name }}</a></td>
+                    <td><span>{{ blog.created_at|datetime }}</span></td>
                     <td>
                         <a href="#0" onclick="edit_blog()"><i class="uk-icon-edit"></i></a>
                         <a href="#0" onclick="delete_blog()"><i class="uk-icon-trash-o"></i></a>
@@ -57,12 +67,6 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        <ul class="uk-pagination">
-            <li><a href="">...</a></li>
-            <li class="uk-active"><span>...</span></li>
-            <li class="uk-disabled"><span>...</span></li>
-            <li><span>...</span></li>
-        </ul>
+        <ul class="uk-pagination" data-uk-pagination="{items:100, itemsOnPage:10}"></ul>
     </div>
 {% endblock %}

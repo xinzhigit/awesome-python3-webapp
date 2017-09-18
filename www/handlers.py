@@ -9,7 +9,7 @@ import markdown2
 from aiohttp import web
 
 from coroweb import get, post
-from apis import APIError, APIValueError, APIPermissionError
+from apis import Page, APIError, APIValueError, APIPermissionError
 
 from models import User, Comment, Blog, next_id
 from config import configs
@@ -192,7 +192,7 @@ def manage_create_blog():
 @get('/manage/blogs')
 def manage_blogs(*, page = '1'):
     return {
-        '__template__' : manage_blogs.html,
+        '__template__' : 'manage_blogs.html',
         'page_index' : get_page_index(page)
     }
 
@@ -200,7 +200,7 @@ def manage_blogs(*, page = '1'):
 async def api_blogs(*, page = '1'):
     page_index = get_page_index(page)
     num = await Blog.findNumber('count(id)')
-    p = page(num, page_index)
+    p = Page(num, page_index)
     if num == 0:
         return dict(page=p, blogs={})
     blogs = await Blog.findAll(orderBy = 'created_at desc', limit = (p.offset, p.limit))
