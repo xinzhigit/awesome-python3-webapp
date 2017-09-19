@@ -5,8 +5,33 @@
 {% block beforehead %}
     <script src="/static/uikit/js/components/pagination.js"></script>
     <script>
-        function procBlogs(blogs) {
-            
+        function procBlogs(results) {
+            var blogs = results['blogs'];
+            var page = results['page'];
+            var blogHtml = '';
+            for (var i = 0, len = blogs.length; i < len; i++) {
+                var blog = blogs[i];
+                blogHtml += '<tr id="blog:{0}">'.format(blog.id);
+                blogHtml += '<td><a target="_blank" href="/blog/{0}">{1}</a></td>'.format(blog.id, blog.name);
+                blogHtml += '<td><a target="_blank" href="/user/{0}">{1}</a></td>'.format(blog.user_id, blog.user_name);
+                blogHtml += '<td><span>{0}</span></td>'.format(blog.created_at.toDateTime());
+                blogHtml += '<td>';
+                blogHtml += '<a href="#0" onclick="edit_blog()"><i class="uk-icon-edit"></i></a>';
+                blogHtml += '<a href="#0" onclick="delete_blog()"><i class="uk-icon-trash-o"></i></a>';
+                blogHtml += '</td>';
+                blogHtml += '</tr>';
+            }
+            $('tbody').html(blogHtml);
+
+            // 添加分页
+            var pageHtml = '<ul class="uk-pagination" data-uk-pagination="{items:{0}, itemsOnPage:{1}, displayedPages:10"></ul>'.format(page.item_count, page.page_size);
+            $('#vm').remove(".uk-pagination");
+            $('#vm').append(pageHtml);
+
+            // 注册点击分页事件
+            $('[data-uk-pagination]').on('select.uk.pagination', function (e, pageIndex) {
+                onChangePage(pageIndex + 1);
+            });
         }
 
         function onChangePage(index) {
@@ -14,10 +39,6 @@
         }
 
         $(function () {
-            $('[data-uk-pagination]').on('select.uk.pagination', function (e, pageIndex) {
-                onChangePage(pageIndex + 1);
-            });
-
             getJSON('/api/blogs', {
                 page: {{ page_index }}
             }, function (err, results) {
@@ -25,7 +46,7 @@
                     return fatal(err);
                 }
                 else {
-                    procBlogs(result);
+                    procBlogs(results);
                 }
                 $('#loading').hide();
             });
@@ -65,19 +86,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for blog in blogs %}
-                <tr id="blog:{{ blog.id }}">
-                    <td><a target="_blank" href="/blog/{{ blog.id }}">{{ blog.name }}</a></td>
-                    <td><a target="_blank" href="/user/{{ blog.user_id }}">{{ blog.user_name }}</a></td>
-                    <td><span>{{ blog.created_at|datetime }}</span></td>
-                    <td>
-                        <a href="#0" onclick="edit_blog()"><i class="uk-icon-edit"></i></a>
-                        <a href="#0" onclick="delete_blog()"><i class="uk-icon-trash-o"></i></a>
-                    </td>
-                </tr>
-                {% endfor %}
             </tbody>
         </table>
-        <ul class="uk-pagination" data-uk-pagination="{items:100, itemsOnPage:10}"></ul>
     </div>
 {% endblock %}

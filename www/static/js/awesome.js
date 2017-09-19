@@ -455,3 +455,10 @@ function error(err) {
 function fatal(err) {
     _display_error($('#loading'), err);
 }
+
+String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/\{(\d+)\}/g, function (s, i) {
+        return args[i];
+    });
+}
