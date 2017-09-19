@@ -5,9 +5,11 @@
 {% block beforehead %}
     <script src="/static/uikit/js/components/pagination.js"></script>
     <script>
+        var blogs;
+        var page;
         function procBlogs(results) {
-            var blogs = results['blogs'];
-            var page = results['page'];
+            blogs = results['blogs'];
+            page = results['page'];
             var blogHtml = '';
             for (var i = 0, len = blogs.length; i < len; i++) {
                 var blog = blogs[i];
@@ -16,8 +18,8 @@
                 blogHtml += '<td><a target="_blank" href="/user/{0}">{1}</a></td>'.format(blog.user_id, blog.user_name);
                 blogHtml += '<td><span>{0}</span></td>'.format(blog.created_at.toDateTime());
                 blogHtml += '<td>';
-                blogHtml += '<a href="#0" onclick="edit_blog()"><i class="uk-icon-edit"></i></a>';
-                blogHtml += '<a href="#0" onclick="delete_blog()"><i class="uk-icon-trash-o"></i></a>';
+                blogHtml += '<a href="#0" index="{0}" onclick="edit_blog(this)"><i class="uk-icon-edit"></i></a>'.format(i);
+                blogHtml += '<a href="#0" index="{0}" onclick="delete_blog(this)"><i class="uk-icon-trash-o"></i></a>'.format(i);
                 blogHtml += '</td>';
                 blogHtml += '</tr>';
             }
@@ -32,6 +34,25 @@
             $('[data-uk-pagination]').on('select.uk.pagination', function (e, pageIndex) {
                 onChangePage(pageIndex + 1);
             });
+        }
+
+        function edit_blog(which) {
+            var index = parseInt($(which).attr('index'));
+            var blog = blogs[index];
+            location.assign('/manage/blogs/edit?id=' + blog.id);
+        }
+
+        function delete_blog(which) {
+            var index = parseInt($(which).attr('index'));
+            var blog = blogs[index];
+            if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
+                postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
+                    if (err) {
+                        return alert(err.message || err.error || err);
+                    }
+                    refresh();
+                });
+            }
         }
 
         function onChangePage(index) {

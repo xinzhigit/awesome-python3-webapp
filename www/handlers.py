@@ -176,7 +176,7 @@ async def get_blog(id):
         c.html_content = text2html(c.content)
     blog.html_content = markdown2.markdown(blog.content)
     return {
-        '__template__': 'blog.html',
+        '__template__': blog.html_content,
         'blog': blog,
         'comments': comments
     }
